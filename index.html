@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>考试信息汇总</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+</head>
+<body>
+    <header>
+        <h1>考试信息汇总</h1>
+        <p>一个集中的查询页面，包含了各类考试的官方网站链接。</p>
+    </header>
+
+    <main>
+        <div class="controls-container">
+            <div class="discipline-filter-container">
+                <label for="discipline-select">学科门类:</label>
+                <select id="discipline-select">
+                    <option value="全部">全部门类</option>
+                    <option value="哲学">哲学</option>
+                    <option value="经济学">经济学</option>
+                    <option value="法学">法学</option>
+                    <option value="教育学">教育学</option>
+                    <option value="文学">文学</option>
+                    <option value="历史学">历史学</option>
+                    <option value="理学">理学</option>
+                    <option value="工学">工学</option>
+                    <option value="农学">农学</option>
+                    <option value="医学">医学</option>
+                    <option value="管理学">管理学</option>
+                    <option value="艺术学">艺术学</option>
+                    <option value="其他">其他</option>
+                </select>
+            </div>
+
+            <div class="sort-container">
+                <label>排序:</label>
+                <button class="sort-btn" id="sort-default-btn">默认</button>
+                <button class="sort-btn" id="sort-alpha-btn">按名称</button>
+                <button class="sort-btn" id="sort-custom-btn">自定义</button>
+            </div>
+            
+            <div id="category-filters">
+                </div>
+
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="在当前范围内搜索...">
+            </div>
+        </div>
+
+        <table id="exams-table">
+            <thead>
+                <tr>
+                    <th>资格名称</th>
+                    <th>类别</th>
+                    <th>官方链接</th>
+                    <th>备注</th>
+                </tr>
+            </thead>
+            <tbody id="exams-body">
+                </tbody>
+        </table>
+   </main>
+    
+    <button id="feedback-btn">问题反馈</button>
+
+    <div id="feedback-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h3>问题反馈与建议</h3>
+            <p>感谢您的支持！请在此处填写您发现的问题或改进建议。</p>
+            <form id="feedback-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+                <label for="feedback-nickname">您的昵称 (可选):</label>
+                <input type="text" id="feedback-nickname" name="nickname">
+
+                <label for="feedback-message">反馈内容:</label>
+                <textarea id="feedback-message" name="message" rows="6" required></textarea>
+
+                <button type="submit">提交反馈</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="config.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>

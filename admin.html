@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>考试信息管理后台</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/tinymce@7/tinymce.min.js" referrerpolicy="origin"></script>
+    <style>
+        body { padding: 30px; font-family: sans-serif; }
+        .admin-container { max-width: 1200px; margin: auto; }
+        .config-management, .export-area, .data-management { background: #fff; padding: 20px; border-radius: 8px; margin-top: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .config-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .config-grid h4 { margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .config-grid ul { list-style: none; padding-left: 0; }
+        .config-grid li { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; padding: 5px; border-radius: 3px; }
+        .config-grid li:hover { background-color: #f5f5f5; }
+        .config-grid input { margin-right: 5px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        .config-grid .delete-item-btn { cursor: pointer; color: red; font-weight: bold; padding: 0 5px; }
+        .export-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .export-grid textarea { width: 100%; height: 250px; font-family: monospace; margin-top: 10px; font-size: 12px; }
+        button { padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; color: white; font-size: 14px; }
+        .btn-primary { background: #007bff; }
+        .btn-success { background: #28a745; }
+        .btn-secondary { background: #6c757d; }
+        .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); padding-top: 60px; }
+        .modal-content { background-color: #fefefe; margin: auto; padding: 20px 30px; border: 1px solid #888; width: 80%; max-width: 600px; border-radius: 8px; position: relative; }
+        .modal-content label { display: block; margin-top: 15px; font-weight: bold; }
+        .modal-content input, .modal-content select { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        .modal-content button { margin-right:10px; }
+        .close-btn { color: #aaa; position: absolute; top: 10px; right: 20px; font-size: 28px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <h1>考试信息管理后台</h1>
+
+        <div class="config-management">
+            <h2>系统配置管理</h2>
+            <div class="config-grid">
+                <div>
+                    <h4>学科门类 (Disciplines)</h4>
+                    <ul id="disciplines-list"></ul>
+                    <div>
+                        <input type="text" id="new-discipline-input" placeholder="新增学科门类">
+                        <button id="add-discipline-btn" class="btn-success">添加</button>
+                    </div>
+                </div>
+                <div>
+                    <h4>类别 (Categories)</h4>
+                    <ul id="categories-list"></ul>
+                    <div>
+                        <input type="text" id="new-category-input" placeholder="新增类别">
+                        <button id="add-category-btn" class="btn-success">添加</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="data-management" style="margin-top: 20px;">
+            <h2>考试数据管理</h2>
+            <button id="add-new-btn" class="btn-success" style="margin-bottom:15px;">+ 新增考试条目</button>
+            <table id="admin-table">
+                <thead>
+                    <tr>
+                        <th>资格名称</th>
+                        <th>学科门类</th>
+                        <th>类别</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="admin-table-body"></tbody>
+            </table>
+        </div>
+
+        <div class="export-area">
+            <h2>导出代码</h2>
+            <div class="export-grid">
+                <div>
+                    <h3>更新 `config.js`</h3>
+                    <p>修改配置后，点击这里生成代码并更新 `config.js` 文件。</p>
+                    <button id="export-config-btn" class="btn-primary">生成 config.js 代码</button>
+                    <textarea id="export-config-code" style="display:none;" readonly></textarea>
+                </div>
+                <div>
+                    <h3>更新 `data.js`</h3>
+                    <p>修改考试数据后，点击这里生成代码并更新 `data.js` 文件。</p>
+                    <button id="export-data-btn" class="btn-primary">生成 data.js 代码</button>
+                    <textarea id="export-data-code" style="display:none;" readonly></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="edit-close-btn">&times;</span>
+            <h3 id="form-title">编辑考试信息</h3>
+            <input type="hidden" id="edit-index">
+            <label>资格名称:</label><input type="text" id="edit-name">
+            <label>学科门类:</label><select id="edit-discipline"></select>
+            <label>类别:</label><select id="edit-category"></select>
+            <label>官方链接:</label><input type="text" id="edit-url">
+            <label>备注:</label>
+            <textarea id="edit-notes"></textarea>
+            <div style="margin-top:20px;">
+                <button id="save-btn" class="btn-success">保存</button>
+                <button id="cancel-btn" class="btn-secondary">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="config.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>
